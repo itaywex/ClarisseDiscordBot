@@ -4,9 +4,11 @@ import asyncio
 from discord.ext.commands import Bot
 from discord.ext import commands
 import platform
+import PrefixLessCommands as PLC
+from Periodic import ChangePresence
 
 # Here you can modify the bot's prefix and description and wether it sends help in direct messages or not.
-clarisse = Bot(description="TTS inspired bot by Itaywex#0001", command_prefix=".", pm_help = False)
+clarisse = Bot(description="TTS inspired bot by Itaywex#0001", command_prefix=".", pm_help=False)
 
 
 startup_extensions = ["Modules.BasicCommands"]
@@ -27,21 +29,36 @@ async def on_ready():
     print('You are running Clarisse v2.1') 
     print('Created by Itaywex#0001') 
     print('\nBig thanks to Habchy#1665 for helping me set up the bot ')
-    return await clarisse.change_presence(game=discord.Game(name='Watching over Ryouko')) 
+    #ChangePresence.start_presence_change(clarisse)
+    #loop.call_later(5, ChangePresence.start_presence_change, clarisse)
+
+    await ChangePresence.start_presence_change(clarisse)
+
+@clarisse.event
+async def on_message(message):
+
+    if message.author == clarisse.user:
+        return
+
+    await PLC.handle_prefixless_messages(clarisse, message)
+
+    # This will enable other commands to run
+    await clarisse.process_commands(message)
+
 
 # This is a basic example of a call and response command. You tell it do "this" and it does it.
 @clarisse.command()
 async def dance(*args):
 
     await asyncio.sleep(0.2)
-    await clarisse.say("/o/")
-    await asyncio.sleep(0.3)
     await clarisse.say("\\o\\")
     await asyncio.sleep(0.3)
+    await clarisse.say("/o/")
+    await asyncio.sleep(0.3)
     await clarisse.say("\\o/")
-    
+
 # After you have modified the code, feel free to delete the line above so it does not keep popping up everytime you initiate the ping commmand.
-    
+
 
 
 if __name__ == "__main__":

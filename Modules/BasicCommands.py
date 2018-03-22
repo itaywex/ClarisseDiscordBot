@@ -29,5 +29,6 @@ class BasicCommands():
         await self.bot.say('Yes, the bot is cool.')
 
 
+
 def setup(bot):
     bot.add_cog(BasicCommands(bot))
